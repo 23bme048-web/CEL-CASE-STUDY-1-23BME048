@@ -1,0 +1,51 @@
+clc; clear; close all;
+
+k = 100;    % Linear stiffness
+beta = 40;  % Cubic stiffness
+P = 50;     % Applied Force
+
+
+xl = 0;    
+xu = 1.3;  
+err = 0.01;
+iter = 1;
+data = [];
+
+
+while abs(xu - xl) > err
+    xr = (xl + xu) / 2;
+    
+    
+    yl = k*xl + beta*xl^3 - P;
+    yr = k*xr + beta*xr^3 - P;
+    
+    
+    data(iter, :) = [xl xr xu yl yr];
+    
+    
+    if yl * yr < 0
+        xu = xr;
+    else
+        xl = xr;
+    end
+    iter = iter + 1;
+end
+
+root = xr;
+disp('   xl       xr       xu       yl       yr');
+disp(data);
+fprintf('Displacement Root = %f m\n', root);
+
+
+x_vals = linspace(0, 1.3, 300);
+y_vals = k*x_vals + beta*x_vals.^3 - P;
+
+figure;
+plot(x_vals, y_vals, 'LineWidth', 1.5); hold on;
+plot(root, 0, 'ro', 'MarkerSize', 8, 'MarkerFaceColor', 'r');
+grid on;
+xlabel('Displacement (x)');
+ylabel('Force Residual (f(x))');
+title('Nonlinear Spring Equilibrium Root');
+
+
